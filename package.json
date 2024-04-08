@@ -1,0 +1,18 @@
+{
+  "name": "indexeddb",
+  "version": "1.0.0",
+  "description": "Provide a simpler and more developer-friendly interface for working with IndexedDB.",
+  "main": "src/indexeddb-wrapper.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "indexedDB"
+  ],
+  "author": "Wang Ruofeng",
+  "license": "ISC",
+  "devDependencies": {
+    "fake-indexeddb": "^5.0.2"
+  }
+}
