@@ -9,7 +9,7 @@ import enforceRange from "./enforceRange.js";
  * @param {*} keyPath
  * @param {*} callback
  */
-function initDatabase(databaseName, version, keyPath, callback) {
+function init(databaseName, tableName, version, keyPath, callback) {
   if (version !== undefined) {
     // Based on spec, not sure why "MAX_SAFE_INTEGER" instead of "unsigned long long", but it's needed to pass
     // tests
@@ -24,11 +24,11 @@ function initDatabase(databaseName, version, keyPath, callback) {
 
   request.onupgradeneeded = function (event) {
     database = event.target.result;
-    if (database.objectStoreNames.contains(databaseName)) {
+    if (database.objectStoreNames.contains(tableName)) {
       console.debug("database.objectStoreNames", database.objectStoreNames);
-      database.deleteObjectStore(databaseName);
+      database.deleteObjectStore(tableName);
     }
-    database.createObjectStore(databaseName, { keyPath: keyPath });
+    database.createObjectStore(tableName, { keyPath: keyPath });
   };
 
   request.onsuccess = function (event) {
@@ -82,7 +82,7 @@ function get(database, fileName, callback, errorCallBack, tableName) {
   };
 }
 
-function set(database, databaseName, data, callback) {
+function set(database, tableName, data, callback) {
   if (!database || !data) {
     if (callback) {
       callback("failed");
@@ -92,8 +92,8 @@ function set(database, databaseName, data, callback) {
 
   const start = performance.now();
 
-  const transaction = database.transaction([databaseName], "readwrite");
-  const objectStore = transaction.objectStore(databaseName);
+  const transaction = database.transaction([tableName], "readwrite");
+  const objectStore = transaction.objectStore(tableName);
 
   var countRequest = objectStore.count();
   countRequest.onsuccess = function () {
@@ -124,10 +124,11 @@ function set(database, databaseName, data, callback) {
   };
 }
 
-let dbName = "test_database";
-initDatabase(dbName, "200", "key_path", (database) => {
+let dbName = "test_database",
+  tbName = "test_table";
+init(dbName, tbName, "200", "key_path", (database) => {
   let foo = { key_path: "key1", value: "value2" };
-  set(database, dbName, foo, (ret) => {
+  set(database, tbName, foo, (ret) => {
     console.log("set db value", ret);
   });
 });
