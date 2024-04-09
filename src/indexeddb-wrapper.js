@@ -4,7 +4,7 @@ import enforceRange from "./enforceRange.js";
 
 /**
  *
- * @param {*} databaseName
+ * @param {*} tableName
  * @param {*} version, unsigned long long
  * @param {*} keyPath
  * @param {*} callback
@@ -19,8 +19,8 @@ function init(databaseName, tableName, version, keyPath, callback) {
     throw new TypeError();
   }
 
-  const request = indexedDB.open(databaseName, version);
-  let database;
+  const request = indexedDB.open(tableName, version);
+  let table;
 
   request.onupgradeneeded = function (event) {
     database = event.target.result;
@@ -32,8 +32,8 @@ function init(databaseName, tableName, version, keyPath, callback) {
   };
 
   request.onsuccess = function (event) {
-    database = event.target.result;
-    callback(database);
+    table = event.target.result;
+    callback(table);
   };
 
   request.onerror = function (event) {
