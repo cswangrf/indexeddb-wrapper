@@ -1,28 +1,27 @@
+const map = new Map();
+map.set("info", "\x1b[0m");
+map.set("error", "\x1b[31m");
+// map.set("assert", "\x1b[\x1b[32m");
+map.set("warn", "\x1b[33m");
+map.set("debug", "\x1b[34m");
+
 class Logger {
   constructor(level = "info", output = "console") {
     this.level = level;
     this.output = output;
-    this._log = (message, level) => {
+    this._log = (message, level, condition) => {
       level = level ?? this.level;
       const timestamp = `[${this.getCurrentTime()}]`;
-      const logMessage = `${timestamp} [${level.toUpperCase()}]: ${message}`;
+      const color = map.get(level);
+      const logMessage = `${color}${timestamp} [${level.toUpperCase()}]: ${message}${map.get(
+        "info"
+      )}`;
       if (this.output === "console") {
         console[level](logMessage);
       } else {
         // Other output logic, such as file, etc.
       }
     };
-  }
-
-  _log(message, level) {
-    level = level ?? this.level;
-    const timestamp = `[${this.getCurrentTime()}]`;
-    const logMessage = `${timestamp} [${level.toUpperCase()}]: ${message}`;
-    if (this.output === "console") {
-      console[level](logMessage);
-    } else {
-      // Other output logic, such as file, etc.
-    }
   }
 
   getCurrentTime() {
@@ -46,24 +45,24 @@ class Logger {
     this.level = level;
   }
 
-  log(message) {
-    this._log(message, "info");
+  log(...message) {
+    this._log(message.join(", "), "info");
   }
 
-  info(message) {
-    this._log(message, "info");
+  info(...message) {
+    this._log(message.join(", "), "info");
   }
 
-  warn(message) {
-    this._log(message, "warn");
+  warn(...message) {
+    this._log(message.join(", "), "warn");
   }
 
-  error(message) {
-    this._log(message, "error");
+  error(...message) {
+    this._log(message.join(", "), "error");
   }
 
-  debug(message) {
-    this._log(message, "debug");
+  debug(...message) {
+    this._log(message.join(", "), "debug");
   }
 }
 
