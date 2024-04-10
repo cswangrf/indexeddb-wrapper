@@ -2,8 +2,8 @@
   "name": "indexeddb",
   "version": "1.0.0",
   "description": "Provide a simpler and more developer-friendly interface for working with IndexedDB.",
-  "main": "src/indexeddb-wrapper.js",
-  "type": "module",
+  "main": "src/IndexedDBWrapper.ts",
+  "type": "commonjs",
   "scripts": {
     "test": "jest"
   },
@@ -12,7 +12,13 @@
   ],
   "author": "Wang Ruofeng",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cswangrf/indexeddb-wrapper.git"
+  },
   "devDependencies": {
-    "fake-indexeddb": "^5.0.2"
+    "@types/jest": "^29.5.12",
+    "fake-indexeddb": "^5.0.2",
+    "jest": "^29.7.0"
   }
 }
