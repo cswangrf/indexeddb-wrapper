@@ -6,7 +6,7 @@ class IndexedDBWrapper {
   private dbName: string;
   private dbVersion: number;
   private logger: Logger;
-  private db: IDBDatabase | null = null;
+  private static db: IDBDatabase | null = null;
 
   constructor(databaseName: string, version: number) {
     this.dbName = databaseName;
@@ -25,7 +25,7 @@ class IndexedDBWrapper {
       };
 
       request.onsuccess = () => {
-        this.db = request.result;
+        IndexedDBWrapper.db = request.result;
         this.logger.info(
           "Data set in " + (performance.now() - start).toFixed(2) + "ms"
         );
@@ -33,8 +33,8 @@ class IndexedDBWrapper {
       };
 
       request.onupgradeneeded = (event) => {
-        this.db = (event.target as IDBOpenDBRequest).result;
-        this.db.createObjectStore(tableName, { keyPath: keyPath });
+        IndexedDBWrapper.db = (event.target as IDBOpenDBRequest).result;
+        IndexedDBWrapper.db.createObjectStore(tableName, { keyPath: keyPath });
       };
     });
   }
@@ -42,10 +42,13 @@ class IndexedDBWrapper {
   async set(tableName: string, data: any, key?: any): Promise<string> {
     const start = performance.now();
     this.logger.info("Set operation started.");
-    if (!this.db) throw new Error("Database is not open");
+    if (!IndexedDBWrapper.db) throw new Error("Database is not open");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(tableName, "readwrite");
+      const transaction = IndexedDBWrapper.db!.transaction(
+        tableName,
+        "readwrite"
+      );
       const store = transaction.objectStore(tableName);
 
       const request = key ? store.put(data, key) : store.add(data);
@@ -64,10 +67,13 @@ class IndexedDBWrapper {
   }
 
   async get(tableName: string, key: any): Promise<any> {
-    if (!this.db) throw new Error("Database is not open");
+    if (!IndexedDBWrapper.db) throw new Error("Database is not open");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(tableName, "readonly");
+      const transaction = IndexedDBWrapper.db!.transaction(
+        tableName,
+        "readonly"
+      );
       const store = transaction.objectStore(tableName);
 
       const request = store.get(key);
@@ -83,10 +89,13 @@ class IndexedDBWrapper {
   }
 
   async listKeys(tableName: string): Promise<any[]> {
-    if (!this.db) throw new Error("Database is not open");
+    if (!IndexedDBWrapper.db) throw new Error("Database is not open");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(tableName, "readonly");
+      const transaction = IndexedDBWrapper.db!.transaction(
+        tableName,
+        "readonly"
+      );
       const store = transaction.objectStore(tableName);
       const request = store.getAllKeys();
 
@@ -101,10 +110,13 @@ class IndexedDBWrapper {
   }
 
   async remove(tableName: string, ...keys: any[]): Promise<string> {
-    if (!this.db) throw new Error("Database is not open");
+    if (!IndexedDBWrapper.db) throw new Error("Database is not open");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(tableName, "readwrite");
+      const transaction = IndexedDBWrapper.db!.transaction(
+        tableName,
+        "readwrite"
+      );
       const store = transaction.objectStore(tableName);
 
       keys.forEach((key) => {
@@ -121,10 +133,13 @@ class IndexedDBWrapper {
   }
 
   async truncate(tableName: string): Promise<void> {
-    if (!this.db) throw new Error("Database is not open");
+    if (!IndexedDBWrapper.db) throw new Error("Database is not open");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(tableName, "readwrite");
+      const transaction = IndexedDBWrapper.db!.transaction(
+        tableName,
+        "readwrite"
+      );
       const store = transaction.objectStore(tableName);
       const request = store.clear();
 
